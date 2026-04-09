@@ -84,8 +84,8 @@ Grounded response with source citations
 ollama pull llama3.2
 
 # Clone the repository
-git clone https://github.com/marianunez-data/til-rag-agent
-cd til-rag-agent
+git clone https://github.com/marianunez-data/rag-knowledge-agent
+cd rag-knowledge-agent
 
 # Create virtual environment and install dependencies
 python -m venv .venv
