@@ -27,7 +27,7 @@ User query
     ▼
 Hybrid Search (lexical + semantic)
     │
-    ├── minsearch (BM25-style)       ← exact keyword match
+    ├── minsearch (lexical)           ← exact keyword match
     ├── sentence-transformers         ← semantic similarity
     │
     ▼
@@ -116,20 +116,38 @@ jupyter notebook
 
 ## Evaluation Results
 
-Evaluated on 22 AI-generated interactions using `llama3.2` (3B parameters) as both agent and judge.
+Evaluated on 22 AI-generated interactions using `llama3.2` (3B parameters) as both agent and judge across 7 quality criteria.
 
-| Criterion          | Pass Rate | Notes                                      |
-|--------------------|-----------|---------------------------------------------|
-| `answer_relevant`  | 62%       | Primary quality signal for RAG systems      |
-| `tool_call_search` | 62%       | Retrieval invoked when answers are grounded |
-| `answer_citations` | 19%       | Limited by small model instruction-following|
+| Criterion              | Pass Rate | Notes                                        |
+|------------------------|-----------|----------------------------------------------|
+| `instructions_follow`  | 100%      | Agent consistently follows system prompt     |
+| `tool_call_search`     | 73%       | Retrieval invoked before answering           |
+| `answer_relevant`      | 59%       | Primary quality signal for RAG systems       |
+| `answer_citations`     | 45%       | Citation compliance with source links        |
+| `answer_clear`         | 32%       | Clarity and accuracy of responses            |
+
+<details>
+<summary>Full evaluation breakdown (all 7 criteria)</summary>
+
+| Criterion              | Pass Rate |
+|------------------------|-----------|
+| `instructions_follow`  | 100%      |
+| `tool_call_search`     | 73%       |
+| `answer_relevant`      | 59%       |
+| `instructions_avoid`   | 50%       |
+| `answer_citations`     | 45%       |
+| `answer_clear`         | 32%       |
+| `completeness`         | 23%       |
+
+</details>
 
 **Context for these metrics:**
 
-- The evaluation uses the **same 3B model as both agent and judge**, which is a known constraint. Using a larger judge model (e.g., GPT-4o or llama3.1-70B) would provide more reliable assessments.
-- `answer_relevant` at 62% with a 3B local model is consistent with published benchmarks for small models on tool-calling tasks. Models under 7B parameters typically achieve 50–65% on agentic tasks requiring structured tool use.
-- `answer_citations` at 19% reflects the difficulty small models have with multi-constraint instructions (search + answer + cite). This metric improves significantly with larger models — a production deployment would use a 70B+ model or API-based provider.
-- The architecture is **provider-agnostic**: swapping to OpenAI, Groq, or Anthropic requires changing only `OLLAMA_BASE_URL` and `OLLAMA_MODEL` in `agent.py` (or via environment variables).
+- The evaluation uses the **same 3B model as both agent and judge**, which is a known constraint. Using a larger judge model (e.g., GPT-4o or Llama 3.1-70B) would provide more reliable assessments.
+- `answer_relevant` at 59% with a 3B local model reflects the expected performance ceiling for small parameter models on agentic tasks requiring structured tool use.
+- `tool_call_search` at 73% confirms the retrieval pipeline is triggered for the majority of queries — the agent searches before answering as instructed.
+- `answer_citations` at 45% reflects the difficulty small models have with multi-constraint instructions (search + answer + cite). This metric improves significantly with larger models.
+- The architecture is **provider-agnostic**: swapping to OpenAI, Groq, or Anthropic requires changing only two configuration variables in `agent.py`.
 
 ---
 
@@ -139,7 +157,7 @@ Evaluated on 22 AI-generated interactions using `llama3.2` (3B parameters) as bo
 
 **Hybrid retrieval over single-strategy search.** Lexical search surfaces exact CLI flags and function names; semantic search captures paraphrased queries. Their union covers both cases with minimal overhead.
 
-**Local inference via Ollama.** Eliminates API costs during development and evaluation. The architecture is provider-agnostic — swapping to any OpenAI-compatible endpoint requires changing two environment variables.
+**Local inference via Ollama.** Eliminates API costs during development and evaluation. The architecture is provider-agnostic — swapping to any OpenAI-compatible endpoint requires changing two configuration variables.
 
 ---
 
