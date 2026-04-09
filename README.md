@@ -116,7 +116,7 @@ jupyter notebook
 
 ## Evaluation Results
 
-Evaluated on 21 AI-generated interactions using `llama3.2` (3B parameters) as both agent and judge.
+Evaluated on 22 AI-generated interactions using `llama3.2` (3B parameters) as both agent and judge.
 
 | Criterion          | Pass Rate | Notes                                      |
 |--------------------|-----------|---------------------------------------------|
