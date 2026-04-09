@@ -1,4 +1,4 @@
-# TIL Agent
+# RAG Knowledge Agent
 
 A retrieval-augmented conversational agent grounded in the [`jbranchaud/til`](https://github.com/jbranchaud/til) repository — a curated collection of over 1,700 short programming tips spanning git, vim, PostgreSQL, JavaScript, Ruby, Python, and command-line tooling.
 
